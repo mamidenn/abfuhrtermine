@@ -24,7 +24,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
 const getDates = async (street: string, number: string, log: Logger) => {
     log(`Straße: ${street}, Nummer: ${number}..`)
     const browser = await puppeteer.launch(
-        { args: process.env['PuppeteerArguments'].split(' ') }
+        { args: process.env['PuppeteerArguments']?.split(' ') }
     );
     const page = await browser.newPage();
     let response = await page.goto('https://ebbweb.stadt.bamberg.de/WasteManagementBamberg/WasteManagementServlet?SubmitAction=wasteDisposalServices&InFrameMode=TRUE');
