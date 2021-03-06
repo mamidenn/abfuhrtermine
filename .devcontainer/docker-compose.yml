@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  function:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+      args: 
+        - "VARIANT=12"
+
+    init: true
+    volumes:
+      # Forwards the local Docker socket to the container.
+      # - /var/run/docker.sock:/var/run/docker-host.sock 
+      # Update this to wherever you want VS Code to mount the folder of your project
+      - ..:/workspace:cached
+
+    command: sleep infinity
+  
+  redis:
+    image: redis

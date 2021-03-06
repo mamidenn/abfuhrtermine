@@ -6,6 +6,6 @@ FROM mcr.microsoft.com/azure-functions/node:3.0-node${VARIANT}-core-tools
 
 # [Optional] Uncomment this section to install additional OS packages.
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
-    && apt-get -y install --no-install-recommends chromium
+    && apt-get -y install --no-install-recommends chromium redis-tools
 
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD yes
