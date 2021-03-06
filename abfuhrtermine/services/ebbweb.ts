@@ -5,6 +5,7 @@ import { Either, left, right } from "fp-ts/lib/Either";
 export type Abfuhrkalender = {
     straße: string,
     nummer: string,
+    stand: Date,
     restmüll: Date[],
     bio: Date[],
     papier: Date[],
@@ -58,6 +59,7 @@ export class EbbWeb {
         return right({
             straße: street,
             nummer: number,
+            stand: moment().toDate(),
             restmüll: restmüll,
             bio: bio,
             papier: papier,
