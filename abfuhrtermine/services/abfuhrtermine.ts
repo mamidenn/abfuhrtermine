@@ -22,14 +22,14 @@ export class Abfuhrtermine {
             this.log("Serving from cache.")
             return right(cached);
         }
-        else {
-            this.log("Retrieving from ebbweb.")
-            let response = await this.ebbweb.getDates(street, number);
-            if (response._tag == "Right") {
-                await this.cache.setItem<Abfuhrkalender>(key, response.right)
-            }
-            return response;
+
+        this.log("Retrieving from ebbweb.")
+        let response = await this.ebbweb.getDates(street, number);
+        if (response._tag == "Right") {
+            await this.cache.setItem<Abfuhrkalender>(key, response.right)
         }
+        return response;
+
     }
     log: Logger
 }
