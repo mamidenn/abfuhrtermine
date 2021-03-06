@@ -9,5 +9,3 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt-get -y install --no-install-recommends chromium
 
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD yes
-ENV PUPPETEER_EXECUTABLE_PATH /usr/bin/chromium
-
