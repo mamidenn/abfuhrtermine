@@ -46,10 +46,10 @@ const getDates = async (street: string, number: string, log: Logger) => {
             .map(content => moment(content.substr(4, 10), 'DD.MM.YYYY').toDate());
 
     const [restmüll, bio, papier, gelberSack] = await Promise.all([
-        await getDatesFromColumn('td.workRest'),
-        await getDatesFromColumn('td.workBio'),
-        await getDatesFromColumn('td.workPapier'),
-        await getDatesFromColumn('td.workGS')
+        getDatesFromColumn('td.workRest'),
+        getDatesFromColumn('td.workBio'),
+        getDatesFromColumn('td.workPapier'),
+        getDatesFromColumn('td.workGS')
     ]);
 
     await browser.close();
