@@ -1,9 +1,31 @@
 import { AzureFunction, Context, HttpRequest, Logger } from "@azure/functions"
 import * as puppeteer from 'puppeteer';
 import * as moment from 'moment';
+import { RedisClient } from 'redis';
+import { promisify } from 'util';
+
+type AbfuhrKalender = {
+    straße: string,
+    nummer: string,
+    restmüll: Date[],
+    bio: Date[],
+    papier: Date[],
+    gelberSack: Date[]
+};
+
+class AsyncRedisClient extends RedisClient {
+    GETAsync = promisify(this.GET);
+    SETEXAsync = promisify(this.SETEX);
+}
+
+const redisClient = new AsyncRedisClient({
+    host: process.env['REDIS_HOST'],
+    port: Number(process.env['REDIS_PORT']),
+    password: process.env['REDIS_PASSWORD'],
+});
+
 
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
-    context.log('HTTP trigger function processed a request.');
     const street = (req.query.straße || (req.body && req.body.straße));
     const number = (req.query.nummer || (req.body && req.body.nummer));
 
@@ -11,18 +33,33 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
         context.res = { status: 400 };
         return;
     }
+    context.log(`Got request for Straße: ${street}, Nummer: ${number}..`)
+
+    redisClient.on("error", (err) => context.log(err));
+
+    const key = `${street} ${number}`
+    const cached = await redisClient.GETAsync(key);
+
+    let response: AbfuhrKalender;
+    if (cached) {
+        context.log("Serving from cache.")
+        response = JSON.parse(cached);
+    }
+    else {
+        context.log("Retrieving from ebbweb.")
+        response = await getDates(street, number, context.log);
+        await redisClient.SETEXAsync(key, 21600, JSON.stringify(response))
+    }
     context.res = {
-        // status: 200, /* Defaults to 200 */
         headers: {
             'Content-Type': 'application/json'
         },
-        body: await getDates(street, number, context.log)
+        body: response
     };
-
 };
 
 const getDates = async (street: string, number: string, log: Logger) => {
-    log(`Straße: ${street}, Nummer: ${number}..`)
+
     const browser = await puppeteer.launch(
         { args: process.env['PuppeteerArguments']?.split(' ') }
     );
