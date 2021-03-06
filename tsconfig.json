@@ -6,5 +6,8 @@
     "rootDir": ".",
     "sourceMap": false,
     "strict": false
-  }
+  },
+  "include": [
+    "abfuhrtermine/**/*"
+  ],
 }
