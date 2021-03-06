@@ -1,5 +1,5 @@
 import { EbbWeb } from "./ebbweb"
-import { EmptyCache, RedisCache } from "./cache"
+import { EmptyCache, InMemoryCache, RedisCache } from "./cache"
 import { Abfuhrtermine } from "./abfuhrtermine"
 import { Logger } from "@azure/functions";
 
@@ -10,6 +10,7 @@ const ebbweb = new EbbWeb;
 //     password: process.env['REDIS_PASSWORD'],
 //     defaultTTL: 21600
 // });
-const cache = new EmptyCache;
+// const cache = new EmptyCache;
+const cache = new InMemoryCache(21600);
 
 export const abfuhrtermine = (log: Logger) => new Abfuhrtermine(ebbweb, cache, log);
