@@ -5,11 +5,12 @@ on:
 
 jobs:
   deploy:
+    name: Deploy
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       
-      - name: Azure Functions Action
+      - name: Deploy Function to Azure
         uses: Azure/functions-action@v1.3.1
         with:
           app-name: abfuhrtermine
