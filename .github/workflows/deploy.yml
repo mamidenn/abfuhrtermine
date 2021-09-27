@@ -11,7 +11,7 @@ jobs:
       - uses: actions/checkout@v2
       
       - name: Deploy Function to Azure
-        uses: Azure/functions-action@v1.4.0
+        uses: Azure/functions-action@v1
         with:
           app-name: abfuhrtermine
           publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
