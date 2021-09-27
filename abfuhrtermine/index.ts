@@ -2,7 +2,7 @@ import { AzureFunction, Context, HttpRequest } from "@azure/functions"
 import { abfuhrtermine } from "./services"
 
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
-    const street = (req.query.straße || (req.body && req.body.straße));
+    const street = (req.query.strasse || (req.body && req.body.strasse));
     const number = (req.query.nummer || (req.body && req.body.nummer));
     context.log(req)
 
