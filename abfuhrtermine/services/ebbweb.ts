@@ -17,7 +17,15 @@ export type HttpError = { code: number, message: string }
 export class EbbWeb {
     async getDates(street: string, number: string): Promise<Either<HttpError, Abfuhrkalender>> {
         const browser = await puppeteer.launch(
-            { args: process.env['PuppeteerArguments']?.split(' ') }
+            { 
+                headless: true,
+                args: [
+                    "--disable-gpu",
+                    "--disable-dev-shm-usage",
+                    "--disable-setuid-sandbox",
+                    "--no-sandbox"
+                ] 
+            }
         );
         const page = await browser.newPage();
         const response = await page.goto('https://ebbweb.stadt.bamberg.de/WasteManagementBamberg/WasteManagementServlet?SubmitAction=wasteDisposalServices&InFrameMode=TRUE');
