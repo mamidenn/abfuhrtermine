@@ -4,7 +4,6 @@ import { abfuhrtermine } from "./services"
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
     const street = (req.query.strasse || (req.body && req.body.strasse));
     const number = (req.query.nummer || (req.body && req.body.nummer));
-    context.log(req)
 
     if (street === undefined || number === undefined) {
         context.res = { status: 400 };
