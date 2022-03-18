@@ -53,42 +53,30 @@ export class EbbWeb {
         )
       ).map((content) => moment(content.substr(4, 10), "DD.MM.YYYY").toDate());
 
-    const zeiträume = await page.$$eval(
-      "[name=Zeitraum]",
-      (elements: HTMLInputElement[]) => elements.map((element) => element.value)
-    );
+    await Promise.all([
+      page.waitForNavigation(),
+      page.select("select[name=Ort]", street.substr(0, 1)),
+    ]);
+    await page.select("select[name=Strasse]", street.replace(" ", "\xa0"));
+    const numberInput = await page.$("input[name=Hausnummer]");
+    await numberInput.click({ clickCount: 3 });
+    await numberInput.type(number);
+    await Promise.all([
+      page.waitForNavigation(),
+      page.click("a[name=forward]"),
+    ]);
 
-    for (const zeitraum of zeiträume) {
-      const radio = await page.$(`[name=Zeitraum][value="${zeitraum}"]`);
-      await radio.click();
-
-      await Promise.all([
-        page.waitForNavigation(),
-        page.select("select[name=Ort]", street.substr(0, 1)),
-      ]);
-      await page.select("select[name=Strasse]", street.replace(" ", "\xa0"));
-      const numberInput = await page.$("input[name=Hausnummer]");
-      await numberInput.click({ clickCount: 3 });
-      await numberInput.type(number);
-      await Promise.all([
-        page.waitForNavigation(),
-        page.click("a[name=forward]"),
-      ]);
-
-      if (!(await page.$("div#termineblock"))) {
-        return left({
-          code: 422,
-          message: `ebbweb did not yield results for Straße ${street}, Nummer: ${number}`,
-        });
-      }
-
-      result.restmüll.push(...(await getDatesFromColumn("td.workRest")));
-      result.bio.push(...(await getDatesFromColumn("td.workBio")));
-      result.papier.push(...(await getDatesFromColumn("td.workPapier")));
-      result.gelberSack.push(...(await getDatesFromColumn("td.workGS")));
-
-      await Promise.all([page.waitForNavigation(), page.click("a[name=back]")]);
+    if (!(await page.$("div#termineblock"))) {
+      return left({
+        code: 422,
+        message: `ebbweb did not yield results for Straße ${street}, Nummer: ${number}`,
+      });
     }
+
+    result.restmüll.push(...(await getDatesFromColumn("td.workRest")));
+    result.bio.push(...(await getDatesFromColumn("td.workBio")));
+    result.papier.push(...(await getDatesFromColumn("td.workPapier")));
+    result.gelberSack.push(...(await getDatesFromColumn("td.workGS")));
 
     await browser.close();
 
